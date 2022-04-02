@@ -2,10 +2,9 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 const cors = require('cors');
-const authRoutes = require('./routes/auth');
+const authRoutes = require('./routes/user');
 const dotenv = require('dotenv');
-
-
+const postRoute = require('./routes/posts')
 dotenv.config();
 
 //connect to DB 
@@ -23,6 +22,6 @@ app.use(express.json());
 app.use(cors());
 //route middleware
 app.use('/api/user', authRoutes);
-
+app.use('/api/posts', postRoute)
 app.listen(3000, () => console.log("Up and running"));
 

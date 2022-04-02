@@ -1,11 +1,11 @@
-const router = require('express').Router();
 const User = require('../model/User');
 const bcrypt = require('bcryptjs');
-const { registerValidation, loginValidation } = require('../validation')
+const { registerValidation, loginValidation } = require('../utils/validation');
+const jwtToken = require('jsonwebtoken');
+const createHashedPassword = require('../utils/password')
 
 
-//Register
-router.post('/register', async (req, res) => {
+const register = async (req, res) => {
     /// validate the data before making the user
     const { error } = registerValidation(req.body);
     if (error) return res.status(400).send(error.details[0].message);
@@ -15,10 +15,9 @@ router.post('/register', async (req, res) => {
     if (emailExist) return res.status(400).send("Email already exits");
 
     // //Hash the passwords
-    const crypt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(req.body.password, crypt)
-    //creating a new user 
+    const hashedPassword = await createHashedPassword(req.body.password);
 
+    //creating a new user 
     const user = new User({
         name: req.body.name,
         email: req.body.email,
@@ -28,14 +27,11 @@ router.post('/register', async (req, res) => {
         const savedUser = await user.save();
         res.send({ user: user._id });
     } catch (err) {
-        res.status(400).send("i am here" + err);
-
+        res.status(400).send(err);
     }
-})
+}
 
-
-//Login
-router.post('/login', async (req, res) => {
+const login = async (req, res) => {
     /// validate the data
     const { error } = loginValidation(req.body);
     if (error) return res.status(400).send(error.details[0].message);
@@ -45,9 +41,14 @@ router.post('/login', async (req, res) => {
     //Password is correct 
     const validPassword = await bcrypt.compare(req.body.password, user.password);
     if (!validPassword) return res.status(400).send("Invalid password");
-    user.isActive = true;
-    res.send("Loged in" + user);
+    // user.isActive = true;
+    //Create and assign a token 
+    const token = jwtToken.sign({ _id: user._id }, process.env.TOKEN_SECRET);
+    //to get the token 
+    // res.header('auth-token', token).send(token);
+}
 
 
-});
-module.exports = router;
+module.exports = {
+    register, login
+}
