@@ -13,7 +13,8 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         min: 6,
-        max: 255
+        max: 255,
+        unique: true
     },
     password: {
         type: String,
@@ -21,11 +22,15 @@ const userSchema = new mongoose.Schema({
         max: 1024,
         min: 6,
     },
+    emailToken: {
+        type: String,
+        unique: true
+    },
     data: {
         type: Date,
         default: Date.now
     },
-    isActive: {
+    isVerified: {
         type: Boolean,
         default: false
     }
