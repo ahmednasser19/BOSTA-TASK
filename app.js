@@ -4,8 +4,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const authRoutes = require('./routes/user');
 const dotenv = require('dotenv');
-const postRoute = require('./routes/posts');
-const cookieparser = require('cookie-parser');
+const checkRoute = require('./routes/check');
 dotenv.config();
 
 //connect to DB 
@@ -21,15 +20,15 @@ mongoose.connect(
 //middleware
 app.use(express.json());
 app.use(cors());
-app.use(cookieparser())
+
 //route middleware
+
 app.use('/api/user', authRoutes);
+app.use('/api/check', checkRoute);
 
-app.use('/api/posts', postRoute);
+
+
 const port = process.env.PORT || 8000
-
-
-
 
 app.listen(port, () => console.log(`Up and running on port ${port}`));
 

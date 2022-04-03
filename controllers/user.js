@@ -5,7 +5,6 @@ const jwtToken = require('jsonwebtoken');
 const createHashedPassword = require('../utils/password');
 const nodemailer = require('nodemailer');
 const dotenv = require('dotenv');
-
 dotenv.config();
 
 let transporter = nodemailer.createTransport({
@@ -67,45 +66,53 @@ const register = async (req, res, next) => {
 }
 
 const verify = async (req, res, next) => {
-    const token = req.query.token;
-    const user = await User.findOne({ emailToken: token })
-    if (user) {
-        user.emailToken = null
-        user.isVerified = true
-        await user.save();
-        console.log("Your email has been verified");
-    } else {
-        console.log("email is not verified")
+    try {
+        const token = req.query.token;
+        const user = await User.findOne({ emailToken: token });
+        if (user) {
+            user.emailToken = null
+            user.isVerified = true
+            await user.save();
+            console.log("Your email has been verified");
+        } else {
+            console.log("email is not verified");
+        }
+    } catch (error) {
+        next(error);
     }
-    next();
+
+
 }
 
 const login = async (req, res, next) => {
-    /// validate the data
-    const { email, password } = req.body;
+    try {
+        /// validate the data
+        const { email, password } = req.body;
+        const { error } = loginValidation(req.body);
+        if (error) return res.status(400).send(error.details[0].message);
 
-    const { error } = loginValidation(req.body);
-    if (error) return res.status(400).send(error.details[0].message);
-    // //checking if the user already in the database
-    const user = await User.findOne({ email: email });
-    if (!user) return res.status(400).send("invalid email or password");
+        // //checking if the user already in the database
+        const user = await User.findOne({ email: email });
+        if (!user) return res.status(400).send("invalid email or password");
 
-    //check the verification 
-    if (!user.isVerified) return res.status(401).send({ message: "Pending Account. Please Verify Your Email!" });
+        //check the verification 
+        if (!user.isVerified) return res.status(401).send({ message: "Pending Account. Please Verify Your Email!" });
 
-    //Password is correct 
-    const validPassword = await bcrypt.compare(password, user.password);
-    if (!validPassword) return res.status(400).send("Invalid password");
-    // user.isActive = true;
-    //Create and assign a token 
-    const token = jwtToken.sign({ _id: user._id }, process.env.TOKEN_SECRET);
-
-    //to get the token 
-    res.header('auth-token', token).send(token);
-    console.log("you are logged in ")
-    next();
+        //Password is correct 
+        const validPassword = await bcrypt.compare(password, user.password);
+        if (!validPassword) return res.status(400).send("Invalid password");
+        // user.isActive = true;
+        //Create and assign a token 
+        const token = jwtToken.sign({ _id: user._id }, process.env.TOKEN_SECRET);
+        res.status(200).json({ token })
+        //to get the token 
+        //res.header('auth-token', token).send(token);
+        console.log("you are logged in ");
+    } catch (error) {
+        next(error);
+    }
 }
 
 module.exports = {
     register, login, verify
-}
+};
