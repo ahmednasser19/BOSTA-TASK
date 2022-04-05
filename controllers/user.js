@@ -24,7 +24,7 @@ const register = async (req, res, next) => {
     if (error) return res.status(400).send(error.details[0].message);
     // // //checking if the user already in the database
     const emailExist = await User.findOne({ email: req.body.email });
-    if (emailExist) return res.status(400).send("Email already exits");
+    if (emailExist) return res.status(400).send("User already exits");
 
     try {
         const { name, email, password } = req.body;
@@ -92,8 +92,8 @@ const login = async (req, res, next) => {
         if (error) return res.status(400).send(error.details[0].message);
 
         // //checking if the user already in the database
-        const user = await User.findOne({ email: email });
-        if (!user) return res.status(400).send("invalid email or password");
+        const user = await User.findOne({ email });
+        if (!user) return res.status(400).send("User does't exist");
 
         //check the verification 
         if (!user.isVerified) return res.status(401).send({ message: "Pending Account. Please Verify Your Email!" });

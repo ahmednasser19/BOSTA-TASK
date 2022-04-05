@@ -45,6 +45,8 @@ const reportSchema = new mongoose.Schema(
             ref: "User",
             required: true,
         },
+        check: { type: mongoose.Schema.Types.ObjectId, required: true, unique: true, ref: 'Check' },
+
     },
     { timestamps: true }
 );

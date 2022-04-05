@@ -70,11 +70,12 @@ const checkSchema = new mongoose.Schema({
         type: Date,
         default: Date.now(),
     },
-    user: {
-        type: mongoose.Schema.ObjectId,
-        ref: "User",
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
         required: true,
-    },
+        ref: 'User',
+    }
+
 }, { timestamps: true }
 );
 module.exports = mongoose.model('Check', checkSchema);
