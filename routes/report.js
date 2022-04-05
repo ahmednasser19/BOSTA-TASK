@@ -4,14 +4,15 @@ const { getReport, getAllReports, updateReport } = require('../controllers/repor
 
 
 
-//Create a check
-//get a check 
+
+//get a report 
 router.get('/getReport/:id', verify, getReport);
 
-//get all checks
+//get all reports
 router.get('/getAllReports', verify, getAllReports);
 
-//update check
+//update report 
 router.post('/updateReport/:id', verify, updateReport);
+
 
 module.exports = router;
