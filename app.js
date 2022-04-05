@@ -5,6 +5,7 @@ const cors = require('cors');
 const authRoutes = require('./routes/user');
 const dotenv = require('dotenv');
 const checkRoute = require('./routes/check');
+const reportRoute = require('./routes/report');
 dotenv.config();
 
 //connect to DB 
@@ -25,7 +26,7 @@ app.use(cors());
 
 app.use('/api/user', authRoutes);
 app.use('/api/check', checkRoute);
-
+app.use('/api/report', reportRoute);
 
 
 const port = process.env.PORT || 8000

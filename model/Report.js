@@ -2,50 +2,41 @@ const mongoose = require("mongoose");
 
 const reportSchema = new mongoose.Schema(
     {
+        url: {
+            type: String
+        },
         status: {
             type: String,
-            required: true,
         },
         availability: {
             type: Number,
-            required: true,
         },
         outages: {
             type: Number,
-            required: true,
         },
         downtime: {
             type: Number,
-            required: true,
         },
         uptime: {
             type: Number,
-            required: true,
         },
         responseTime: {
             type: Number,
-            required: true,
         },
         history: {
             type: {
                 timeStamp: Date,
-                logs: Schema.Types.Mixed,
+                logs: mongoose.Schema.Types.Mixed,
             },
         },
         tags: {
             type: [String],
         },
-        check: {
-            type: mongoose.Schema.ObjectId,
-            ref: "Check",
+        checkId: {
+            type: mongoose.Schema.Types.ObjectId,
             required: true,
+            ref: 'Check'
         },
-        user: {
-            type: mongoose.Schema.ObjectId,
-            ref: "User",
-            required: true,
-        },
-        check: { type: mongoose.Schema.Types.ObjectId, required: true, unique: true, ref: 'Check' },
 
     },
     { timestamps: true }

@@ -19,8 +19,4 @@ router.post('/updateCheck/:id', verify, updateCheck);
 //delete check 
 router.delete('/deleteCheck/:id', verify, deleteCheck);
 
-
-
-
-
 module.exports = router;

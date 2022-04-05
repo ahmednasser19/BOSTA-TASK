@@ -2,6 +2,7 @@ const Check = require('../model/Check')
 const dotenv = require('dotenv');
 const { checkValidation } = require('../utils/validation');
 const mongoose = require('mongoose');
+const { initializeReport } = require('../services/createReports')
 dotenv.config();
 
 
@@ -14,10 +15,9 @@ const createCheck = async (req, res) => {
     try {
         //Create check in database
         const newCheck = await Check.create(req.body);
-        // console.log(newCheck)
-        res.status(200).json(newCheck);
+        await initializeReport(newCheck._id, newCheck.url);
         console.log("You have added an check!");
-
+        res.status(200).json(newCheck);
     } catch (error) {
         console.log(error);
     }
@@ -76,7 +76,7 @@ const deleteCheck = async (req, res) => {
         return res.status(204).send("Check deleted");
 
     } catch (error) {
-        console.log(error)
+        console.log(error);
     }
 
 }
